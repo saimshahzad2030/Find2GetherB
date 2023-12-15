@@ -1,0 +1,30 @@
+{
+  "name": "fypb",
+  "version": "1.0.0",
+  "description": "Our FYP Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saimshahzad2030/Find2GetherB.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/saimshahzad2030/Find2GetherB/issues"
+  },
+  "homepage": "https://github.com/saimshahzad2030/Find2GetherB#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.3.0",
+    "mongoose": "^8.0.3",
+    "nodemailer": "^6.9.7",
+    "nodemon": "^3.0.2"
+  }
+}
