@@ -31,7 +31,7 @@ const sendVerificationEmail = async (userEmail, verificationToken, req, res) => 
         to: userEmail,
         subject: 'Account Verification',
         //   text: `Click the following link to verify your account: https://yourapp.com/verify?token=${verificationToken}`,
-        text: `${verificationToken} is your verification Token`,
+        text: `B-${verificationToken} is your verification Token`,
     };
 
     // Send the email
