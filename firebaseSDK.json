@@ -1,10 +1,4 @@
-
-PORT=3333
-
-MONGO_URI = "mongodb+srv://saimshehzad2030:isb8Syqe3DamfV1r@cluster0.096xvbs.mongodb.net/FYP" 
-
-BUCKET_URL ="gs://find2gether-5c895.appspot.com"
-FIREBASE_AUTH = {
+{
   "type": "service_account",
   "project_id": "find2gether-5c895",
   "private_key_id": "f7a4594f8aa417271c45f83020a8e2af95211a35",
@@ -17,4 +11,3 @@ FIREBASE_AUTH = {
   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-6zu2x%40find2gether-5c895.iam.gserviceaccount.com",
   "universe_domain": "googleapis.com"
 }
-

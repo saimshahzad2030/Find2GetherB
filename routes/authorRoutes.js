@@ -1,6 +1,6 @@
 const express = require('express');
-const authController = require('D:/Useful codes/bookLibB/MidTermBookLib/controller/authorController');
-const { verifyUser} = require('D:/Useful codes/bookLibB/MidTermBookLib/middleware/jwt');
+const authController = require('D:/FYP Final/Find2GetherB/controller/authorController');
+const { verifyUser} = require('D:/FYP Final/Find2GetherB/middleware/jwt');
 const router = express.Router()
 
 router.post('/signup',authController.signup)

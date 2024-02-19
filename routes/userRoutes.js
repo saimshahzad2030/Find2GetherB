@@ -1,8 +1,9 @@
 const express = require('express');
-const {signup,login,contact,sendVerificationToken,verifyToken,deleteToken,checkUsernameAvailability,addBlockedUser} = require('../controller/userController');
+const {allMissings,signup,allSuspects,login,contact,sendVerificationToken,verifyToken,deleteToken,checkUsernameAvailability,addBlockedUser,addCaseFinder} = require('../controller/userController');
 const { verifyUser} = require('../middleware/jwt');
 const router = express.Router()
-
+const multer = require('multer')
+const path = require('path')
 //when user tries to signup
 router.post('/signup',signup)
 
@@ -31,5 +32,36 @@ router.post('/contact',contact)
 router.post('/blockedUser',addBlockedUser)
 // router.get('/getBook',verifyUser,userController.getBook)
 // router.post('/returnBook',verifyUser,userController.returnBook)
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+      cb(null, 'uploads/');
+    },
+    filename: function(req, file, cb) {
+      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+  });
+
+  const upload = multer({
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB file size limit
+    fileFilter: function (req, file, cb) {
+        const filetypes = /jpeg|jpg|png/;
+        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = filetypes.test(file.mimetype);
+        if (mimetype && extname) {
+            return cb(null, true);
+        } else {
+            cb('Error: Images only!');
+        }
+    }
+});
+
+router.post('/Img', upload.single('image'),addCaseFinder);
+// router.post('/Img',addCaseFinder);
+
+router.get('/allSuspects',allSuspects)
+
+router.get('/allMissings',allMissings)
 
 module.exports = router;

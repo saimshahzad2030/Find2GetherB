@@ -3,11 +3,27 @@ const User = require('../model/userModel');
 const nodemailer = require('nodemailer');
 // const Book = require('D:/Useful codes/bookLibB/MidTermBookLib/model/bookModel');
 const jwt = require('../middleware/jwt')
+const fs = require('fs'); // Import the fs module
+
 // const borrowedBooksModel = require('D:/Useful codes/bookLibB/MidTermBookLib/model/borrowedBooksModel');
 const BlockedUser = require('../model/blockedUserModel')
 const Query = require('../model/ContactModel')
+const Case = require('../model/caseModel')
 const bcrypt = require('bcrypt');
 const Token = require('../model/Token')
+const CaseNo = require('../model/caseNumber')
+const admin = require('firebase-admin');
+require('dotenv').config({path:'D:/FYP Final/Find2GetherB/config.env'})
+// const serviceAccount = JSON.parse(process.env.FIREBASE_AUTH)
+const serviceAccount = require('../firebaseSDK.json')
+
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  storageBucket: process.env.BUCKET_URL
+});
+
+
 
 const generateToken = () => {
     // Generate a random number between 1000 and 9999
@@ -221,7 +237,7 @@ const login = async (req, res) => {
 
                 if (user) {
                     const token = jwt.sign(req.body, password)
-                    res.status(200).json({ token: token, firstname: user.firstname })
+                    res.status(200).json({ token: token, firstname: user.firstname,username:user.username })
                 }
             }
 
@@ -243,7 +259,8 @@ else if (email ) {
 
     if (user) {
         const token = jwt.sign(req.body, password)
-        res.status(200).json({ token: token, firstname: user.firstname })
+        res.status(200).json({ token: token, firstname: user.firstname,username:user.username })
+        
     }
 }
 
@@ -298,6 +315,96 @@ const addBlockedUser = async (req, res) => {
     }
     catch (error) {
         res.status(520).send(error)
+    }
+}
+
+const addCaseFinder = async(req,res)=>{
+    try {
+        console.log("FIREBASE_AUTH value:", process.env.FIREBASE_AUTH);
+
+        const { name, fName, contact,reportedBy,  city,address, age,date,mentalCondition,caseType } = req.body;
+        
+        if (!req.file) {
+          res.status(400).send('No file uploaded.');
+          return;
+        }
+
+        //else if (!name || !fName || !contact || !city || !address || !age || !date || !mentalCondition) {
+            
+         else if (!name || !reportedBy || !caseType || !fName || !contact || !city || !address || !age || !date || !mentalCondition) {
+            res.status(400).send('all fields required');
+            return;
+          }
+          else{
+            console.log(req.body,'\n',req.file)
+            const bucket = admin.storage().bucket();
+            const file = req.file;
+            console.log('file : ',req.file)
+            const currentDate = new Date();
+            const timestamp = currentDate.toISOString().replace(/[-:.]/g, ''); // Format: YYYYMMDDTHHmmssZ
+            
+            // Upload the file to Firebase Storage
+            await bucket.upload(file.path, {
+              destination: `${caseType}/` + `${caseType}_${timestamp}`,
+              metadata: {
+                contentType: file.mimetype
+              }
+            });
+            await bucket.makePublic();
+            // const imageUrl = `https://storage.googleapis.com/${bucket.name}/images/${file.filename}`;
+            const imageUrl = `https://firebasestorage.googleapis.com/v0/b/find2gether-5c895.appspot.com/o/${caseType}%2F${caseType}_${timestamp}?alt=media`;
+            const dateObject = new Date(date);
+
+            // Extract the year, month, and day from the date object
+            const year = dateObject.getFullYear();
+            const month = dateObject.getMonth() + 1; // Adding 1 because getMonth returns zero-based month index
+            const day = dateObject.getDate();
+            
+            // Create a formatted date string
+            const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+            
+            const newCase = new Case({
+                name,reportedBy, fName,caseType, contact,  city,address, age,date:formattedDate,mentalCondition ,imgUrl:imageUrl
+            });
+            // res.status(200).send('done');
+            
+            await newCase.save();
+            // const sda = await Case.findOne({ newCase})
+            res.send('File uploaded successfully. Image URL: ' + imageUrl + '\n'+'Added Case:'+newCase);
+            fs.unlink(file.path, (err) => {
+                if (err) {
+                  console.error('Error deleting file:', err);
+                } else {
+                  console.log('File deleted successfully');
+                }
+              });}
+        
+      } catch (error) {
+        console.error('Error uploading file to Firebase Storage:', error);
+        res.status(500).send('Error uploading file to Firebase Storage.');
+      }
+}
+
+const allSuspects = async(req,res)=>{
+    try {
+        
+           const suspects = await Case.find({caseType:'sus'})
+           res.status(200).send(suspects)
+        }
+    
+    catch (error) {
+        return res.status(520).json({ message: "internal server error", error: error.message });
+    }
+}
+const allMissings = async(req,res)=>{
+    try {
+        
+           const suspects = await Case.find({caseType:'mis'})
+           res.status(200).send(suspects)
+        }
+    
+    catch (error) {
+        return res.status(520).json({ message: "internal server error", error: error.message });
     }
 }
 // const getBook = async(req, res)  => {
@@ -383,4 +490,4 @@ const addBlockedUser = async (req, res) => {
 // }
 
 
-module.exports = { contact, login, signup, sendVerificationToken, verifyToken, deleteToken, checkUsernameAvailability,addBlockedUser }
+module.exports = { allMissings,allSuspects,contact, login, signup, sendVerificationToken, verifyToken, deleteToken, checkUsernameAvailability,addBlockedUser,addCaseFinder }

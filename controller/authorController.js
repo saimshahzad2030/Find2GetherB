@@ -1,7 +1,7 @@
 // const { model } = require('mongoose');
-const auth = require('D:/Useful codes/bookLibB/MidTermBookLib/model/authModel');
-const book = require('D:/Useful codes/bookLibB/MidTermBookLib/model/bookModel');
-const jwt = require('D:/Useful codes/bookLibB/MidTermBookLib/middleware/jwt')
+// const auth = require('D:/Useful codes/bookLibB/MidTermBookLib/model/authModel');
+// const book = require('D:/Useful codes/bookLibB/MidTermBookLib/model/bookModel');
+// const jwt = require('D:/Useful codes/bookLibB/MidTermBookLib/middleware/jwt')
 const bcrypt = require('bcrypt')
 const authController = {
     async signup (req,res){
