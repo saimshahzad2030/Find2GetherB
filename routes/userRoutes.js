@@ -1,5 +1,5 @@
 const express = require('express');
-const {allMissings,signup,allSuspects,login,contact,sendVerificationToken,verifyToken,deleteToken,checkUsernameAvailability,addBlockedUser,addCaseFinder} = require('../controller/userController');
+const {deleteCase,allUploadedCases,allMissings,signup,allSuspects,login,contact,sendVerificationToken,verifyToken,deleteToken,checkUsernameAvailability,addBlockedUser,addCaseFinder} = require('../controller/userController');
 const { verifyUser} = require('../middleware/jwt');
 const router = express.Router()
 const multer = require('multer')
@@ -63,5 +63,10 @@ router.post('/Img', upload.single('image'),addCaseFinder);
 router.get('/allSuspects',allSuspects)
 
 router.get('/allMissings',allMissings)
+
+router.get('/allUploadedCases',allUploadedCases)
+
+
+router.post('/deleteCase',deleteCase)
 
 module.exports = router;

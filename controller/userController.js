@@ -407,87 +407,49 @@ const allMissings = async(req,res)=>{
         return res.status(520).json({ message: "internal server error", error: error.message });
     }
 }
-// const getBook = async(req, res)  => {
-//     try {
-//         const { bookname, author } = req.body;
-//         if (!bookname || !author) {
-//             return res.status(404).json({ message: "all fields required" })
-//         }
+const allUploadedCases = async(req,res)=>{
+    try {
+        const {username} = req.query
+        if(!username){
+            res.status(401).send('Enter Username')
+        }
+        else{
+            const personalCases = await Case.find({reportedBy:username})
+            res.status(200).send(personalCases)
+        
+        }
+            }
+    
+    catch (error) {
+        return res.status(520).json({ message: "internal server error", error: error.message });
+    }
+}
+const deleteCase = async(req,res)=>{
+    try {
+        const {caseId} = req.body
+        if(!caseId){
+            res.status(401).send('Enter CaseId')
+        }
+       
 
-//         else {
-//             const findBook = await Book.findOne({ bookname })
-//             if (findBook) {
-//                 // // console.log("book found");
-//                 const [bearer, token, secretKey, email] = req.headers.authorization.split(" ");
-//                 const date = new Date();
+        
+        else{
+            const findCase = await Case.findOne({_id:caseId});
+            console.log(findCase)
+            if(!findCase){
+                res.status(401).send('No Case Found')
+            }
+            else{
+                await Case.deleteOne({_id:caseId})
+                res.status(200).send('done')
+            }
+        
+        }
+            }
+    
+    catch (error) {
+        return res.status(520).json({ message: "internal server error", error: error.message });
+    }
+}
 
-
-//                 const threeDaysAfter = new Date(date.getTime() + (3 * 24 * 60 * 60 * 1000));
-
-//                 // console.log(findBook)
-//                 const newBorrowedBook = new borrowedBooksModel({
-//                     bookname,
-//                     author,
-//                     borrowedby: email,
-//                     borrowedDate: date.toString(),
-
-//                     returnDate: threeDaysAfter.toString()
-//                 })
-//                 await newBorrowedBook.save()
-//                 await Book.deleteOne({bookname:bookname})
-//                 res.status(200).send(newBorrowedBook)
-//             }
-
-//             else {
-//                 // //create Job
-//                 // const newBook = new book({
-//                 //     bookname,author,price
-//                 // })
-//                 // await newBook.save()
-
-//                 // // const token = jwt.sign(req.body)
-//                 // res.status(200).json({newBook})
-//                 res.status(402).send("No Book found")
-//             }
-//         }
-
-//     }
-//     catch (error) {
-//         res.status(520).send(error)
-//     }
-// }
-// const returnBook = async(req, res) => {
-//     try {
-//         const { bookname, author } = req.body;
-//         if (!bookname || !author) {
-//             return res.status(404).json({ message: "all fields required" })
-//         }
-
-//         else {
-//             const findBook = await borrowedBooksModel.findOne({ bookname })
-//             if (findBook) {
-
-//                 const newBook = new Book({
-//                     bookname,
-//                     author
-
-//                 })
-//                 await newBook.save()
-//                 await borrowedBooksModel.deleteOne({bookname:bookname})
-//                 res.status(200).send(newBook)
-//             }
-
-//             else {
-
-//                 res.status(402).send("No Book found")
-//             }
-//         }
-
-//     }
-//     catch (error) {
-//         res.status(520).send(error)
-//     }
-// }
-
-
-module.exports = { allMissings,allSuspects,contact, login, signup, sendVerificationToken, verifyToken, deleteToken, checkUsernameAvailability,addBlockedUser,addCaseFinder }
+module.exports = {deleteCase,allUploadedCases, allMissings,allSuspects,contact, login, signup, sendVerificationToken, verifyToken, deleteToken, checkUsernameAvailability,addBlockedUser,addCaseFinder }
