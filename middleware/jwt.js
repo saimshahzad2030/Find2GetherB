@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+
 const jwtConfig = {
     sign(payload,secretKey){
         const token = jwt.sign(payload,secretKey)
@@ -10,7 +11,7 @@ const jwtConfig = {
       // const secretKey = req.headers.secretkey;
       try{
         if(authHeader){
-            const [bearer,token,secretKey,email] = authHeader.split(" ");;
+            const [bearer,token,secretKey] = authHeader.split(" ");;
               jwt.verify(token, secretKey, function (err, decoded) {
                 if (err) {
                     // console.log(typeof(token) , typeof(secretKey))
@@ -18,8 +19,8 @@ const jwtConfig = {
                      
                 }
                 else {
-                    // res.status(200).send("JWT authentized");
-               res.status(200);
+                    res.status(200).send(decoded)
+          
                     next()
     
                 }

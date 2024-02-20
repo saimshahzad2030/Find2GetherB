@@ -198,8 +198,8 @@ const signup = async (req, res) => {
             await newUser.save();
 
 
-            const token = jwt.sign(req.body, password);
-            return res.status(200).json({ token });
+            const token = jwt.sign(req.body, username);
+            return res.status(200).json( {token,username,email,firstname});
         }
     } catch (error) {
         return res.status(520).json({ message: "internal server error", error: error.message });
@@ -236,9 +236,9 @@ const login = async (req, res) => {
                 //generate jwt
 
                 if (user) {
-                    const token = jwt.sign(req.body, password)
-                    res.status(200).json({ token: token, firstname: user.firstname,username:user.username })
-                }
+                    const token = jwt.sign(req.body, username)
+                    res.status(200).json({ token: token, email:user.email,firstname: user.firstname,username:user.username,pass:user.password })
+         }
             }
 
 else if (email ) {
@@ -258,8 +258,8 @@ else if (email ) {
     // const authHeader = req.headers.authorization;
 
     if (user) {
-        const token = jwt.sign(req.body, password)
-        res.status(200).json({ token: token, firstname: user.firstname,username:user.username })
+        const token = jwt.sign({username:user.username,password}, user.username)
+        res.status(200).json({ token: token,email:email, firstname: user.firstname,username:user.username,pass:user.password })
         
     }
 }
@@ -272,6 +272,19 @@ else if (email ) {
         return res.status(520).json({ message: "internal server error", error: error.message })
     }
 }
+
+const autoLogin = async(req,res)=>{
+    try {
+        res.status(200)
+        }
+            
+    
+    catch (error) {
+        return res.status(520).json({ message: "internal server error", error: error.message });
+    }
+}
+
+
 const contact = async (req, res) => {
     try {
         const { email, username, query } = req.body;
@@ -452,4 +465,4 @@ const deleteCase = async(req,res)=>{
     }
 }
 
-module.exports = {deleteCase,allUploadedCases, allMissings,allSuspects,contact, login, signup, sendVerificationToken, verifyToken, deleteToken, checkUsernameAvailability,addBlockedUser,addCaseFinder }
+module.exports = {autoLogin,deleteCase,allUploadedCases, allMissings,allSuspects,contact, login, signup, sendVerificationToken, verifyToken, deleteToken, checkUsernameAvailability,addBlockedUser,addCaseFinder }

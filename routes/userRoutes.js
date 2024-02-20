@@ -1,5 +1,5 @@
 const express = require('express');
-const {deleteCase,allUploadedCases,allMissings,signup,allSuspects,login,contact,sendVerificationToken,verifyToken,deleteToken,checkUsernameAvailability,addBlockedUser,addCaseFinder} = require('../controller/userController');
+const {autoLogin,deleteCase,allUploadedCases,allMissings,signup,allSuspects,login,contact,sendVerificationToken,verifyToken,deleteToken,checkUsernameAvailability,addBlockedUser,addCaseFinder} = require('../controller/userController');
 const { verifyUser} = require('../middleware/jwt');
 const router = express.Router()
 const multer = require('multer')
@@ -58,6 +58,8 @@ const storage = multer.diskStorage({
 });
 
 router.post('/Img', upload.single('image'),addCaseFinder);
+router.post('/autoLogin',verifyUser,autoLogin)
+
 // router.post('/Img',addCaseFinder);
 
 router.get('/allSuspects',allSuspects)
