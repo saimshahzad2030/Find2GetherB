@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 // const Book = require('D:/Useful codes/bookLibB/MidTermBookLib/model/bookModel');
 const jwt = require('../middleware/jwt')
 const fs = require('fs'); // Import the fs module
-
+const mongoose = require('mongoose')
 // const borrowedBooksModel = require('D:/Useful codes/bookLibB/MidTermBookLib/model/borrowedBooksModel');
 const BlockedUser = require('../model/blockedUserModel')
 const Query = require('../model/ContactModel')
@@ -383,7 +383,7 @@ const addCaseFinder = async(req,res)=>{
             
             await newCase.save();
             // const sda = await Case.findOne({ newCase})
-            res.send('File uploaded successfully. Image URL: ' + imageUrl + '\n'+'Added Case:'+newCase);
+            res.status(200).send(newCase);
             fs.unlink(file.path, (err) => {
                 if (err) {
                   console.error('Error deleting file:', err);
@@ -465,4 +465,27 @@ const deleteCase = async(req,res)=>{
     }
 }
 
-module.exports = {autoLogin,deleteCase,allUploadedCases, allMissings,allSuspects,contact, login, signup, sendVerificationToken, verifyToken, deleteToken, checkUsernameAvailability,addBlockedUser,addCaseFinder }
+const matchedCases = async(req,res)=>{
+    try {
+        const {imageId,caseType} = req.query
+        if(!imageId){
+            res.status(401).send('Enter imageId')
+        }
+        else if(!caseType){
+            res.status(401).send('Enter caseType')
+        }
+        else{
+            // const imageIds = imageId.split(',')
+
+            const matchedCase = await Case.find({_id:{ $in:imageId },caseType:caseType})
+            res.status(200).send(matchedCase)
+        
+        }
+            }
+    
+    catch (error) {
+        return res.status(520).json({ message: "internal server error", error: error.message });
+    }
+}
+
+module.exports = {matchedCases,autoLogin,deleteCase,allUploadedCases, allMissings,allSuspects,contact, login, signup, sendVerificationToken, verifyToken, deleteToken, checkUsernameAvailability,addBlockedUser,addCaseFinder }
