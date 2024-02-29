@@ -1,5 +1,5 @@
 const express = require('express');
-const {autoLogin,deleteCase,allUploadedCases,allMissings,signup,allSuspects,login,contact,sendVerificationToken,verifyToken,deleteToken,checkUsernameAvailability,addBlockedUser,addCaseFinder, matchedCases} = require('../controller/userController');
+const {allMatchedCases,autoLogin,deleteCase,allUploadedCases,allMissings,signup,allSuspects,login,contact,sendVerificationToken,verifyToken,deleteToken,checkUsernameAvailability,addBlockedUser,addCaseFinder, matchedCases} = require('../controller/userController');
 const { verifyUser} = require('../middleware/jwt');
 const router = express.Router()
 const multer = require('multer')
@@ -75,5 +75,6 @@ router.post('/deleteCase',deleteCase)
 
 
 router.get('/matchedCases',matchedCases)
+router.get('/allMatchedCases',allMatchedCases)
 
 module.exports = router;

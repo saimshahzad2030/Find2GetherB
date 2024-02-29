@@ -477,7 +477,7 @@ const matchedCases = async(req,res)=>{
         else{
             // const imageIds = imageId.split(',')
 
-            const matchedCase = await Case.find({_id:{ $in:imageId },caseType:caseType})
+            const matchedCase = await Case.find({_id:imageId ,caseType:caseType})
             res.status(200).send(matchedCase)
         
         }
@@ -487,5 +487,24 @@ const matchedCases = async(req,res)=>{
         return res.status(520).json({ message: "internal server error", error: error.message });
     }
 }
+const allMatchedCases = async(req,res)=>{
+    try {
+        const {imageId} = req.query
+        if(!imageId){
+            res.status(401).send('Enter imageId')
+        }
+       
+        else{
+            // const imageIds = imageId.split(',')
 
-module.exports = {matchedCases,autoLogin,deleteCase,allUploadedCases, allMissings,allSuspects,contact, login, signup, sendVerificationToken, verifyToken, deleteToken, checkUsernameAvailability,addBlockedUser,addCaseFinder }
+            const matchedCase = await Case.find({_id:imageId })
+            res.status(200).send(matchedCase)
+        
+        }
+            }
+    
+    catch (error) {
+        return res.status(520).json({ message: "internal server error", error: error.message });
+    }
+}
+module.exports = {allMatchedCases,matchedCases,autoLogin,deleteCase,allUploadedCases, allMissings,allSuspects,contact, login, signup, sendVerificationToken, verifyToken, deleteToken, checkUsernameAvailability,addBlockedUser,addCaseFinder }
